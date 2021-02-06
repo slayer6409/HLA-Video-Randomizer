@@ -1,6 +1,6 @@
 # HLA-Video-Randomizer
 
-##How to use
+## How to use
 
 1. Run the exe to generate the folders
 2. In the config.json change the path to match where your game is installed
