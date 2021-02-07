@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NReco;
+using NReco.VideoConverter;
 
 namespace HLA_Video_Randomizer
 {
@@ -45,11 +47,14 @@ namespace HLA_Video_Randomizer
             if (!hasErrored)
             {
                 System.IO.Directory.CreateDirectory(@".\put WebMs Here");
+                System.IO.Directory.CreateDirectory(@".\put GIFs Here");
                 string[] files = Directory.GetFiles(@".\put WebMs Here", @"*.webm");
+                string[] files4 = Directory.GetFiles(@".\put GIFs Here", @"*.gif");
+                string[] files5 = Directory.GetFiles(@".\put GIFs Here", @"*.mp4");
                 string fullPath = defaultConfig.HLAPath + restOfPath;
-                if (files.Length == 0)
+                if (files.Length == 0 && files4.Length==0)
                 {
-                    Console.WriteLine("Put your webms in the folder called \"put WebMs Here\" then run the program again.");
+                    Console.WriteLine("Put your webms in the folder called \"put WebMs Here\" \nor put gifs in the folder called \"put GIFs Here\" \nthen run the program again.");
                     hasWebMs = false;
                 }
                 if (!Directory.Exists(fullPath))
@@ -57,7 +62,31 @@ namespace HLA_Video_Randomizer
                     Console.WriteLine("Check the HLAPath, the path doesn't seem to exist.");
                     hasWebMs = false;
                 }
+                var ffMpeg = new NReco.VideoConverter.FFMpegConverter();
+                
+                foreach(var fil in files4)
+                {
+                    string fName = fil.Substring(@".\put GIFs Here".Length + 1);
+                    ffMpeg.ConvertMedia(fil, fName+".webm",Format.webm);
+                    File.Delete(fil);
+                }
+                foreach (var fil in files5)
+                {
+                    string fName = fil.Substring(@".\put GIFs Here".Length + 1);
+                    ffMpeg.ConvertMedia(fil, fName + ".webm", Format.webm);
+                    File.Delete(fil);
+                }
 
+                files4 = Directory.GetFiles(@".\", @"*.webm");
+                foreach(var fil in files4)
+                {
+
+                    string fName = fil.Substring(@".\".Length);
+                    File.Move(fil, @".\put WebMs Here\"+fName);
+                    
+                }
+
+                files = Directory.GetFiles(@".\put WebMs Here", @"*.webm");
                 System.IO.Directory.CreateDirectory(@".\Backup Files");
 
                 string[] files2 = Directory.GetFiles(fullPath, "*.webm");
