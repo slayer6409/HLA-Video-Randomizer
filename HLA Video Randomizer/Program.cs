@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NReco;
 using NReco.VideoConverter;
+using System.Threading;
 
 namespace HLA_Video_Randomizer
 {
@@ -34,6 +35,7 @@ namespace HLA_Video_Randomizer
                     writeConfig();
                 }
                 readConfig();
+                writeConfig();
                 if (defaultConfig.HLAPath.EndsWith(@"\"))
                 {
                     restOfPath = @"game\hlvr\panorama\videos";
@@ -92,30 +94,35 @@ namespace HLA_Video_Randomizer
                 string[] files2 = Directory.GetFiles(fullPath, "*.webm");
                 string[] files3 = Directory.GetFiles(@".\Backup Files");
 
-
-                if (hasWebMs)
+                do
                 {
-                    if (files3.Length == 0)
+                    if (hasWebMs)
                     {
-                        foreach (var file in files2)
+                        if (files3.Length == 0)
                         {
-                            string fName = file.Substring(fullPath.Length + 1);
+                            foreach (var file in files2)
+                            {
+                                string fName = file.Substring(fullPath.Length + 1);
 
-                            File.Copy(Path.Combine(fullPath, fName), @".\Backup Files\" + fName);
+                                File.Copy(Path.Combine(fullPath, fName), @".\Backup Files\" + fName);
+                            }
                         }
-                    }
-                    Random rand = new Random();
+                        Random rand = new Random();
 
-                    File.Copy(files[rand.Next(files.Length)], Path.Combine(fullPath, file1), true);
-                    File.Copy(files[rand.Next(files.Length)], Path.Combine(fullPath, file2), true);
-                    File.Copy(files[rand.Next(files.Length)], Path.Combine(fullPath, file3), true);
-                    File.Copy(files[rand.Next(files.Length)], Path.Combine(fullPath, file4), true);
-                    File.Copy(files[rand.Next(files.Length)], Path.Combine(fullPath, file5), true);
-                    File.Copy(files[rand.Next(files.Length)], Path.Combine(fullPath, file6), true);
-                    File.Copy(files[rand.Next(files.Length)], Path.Combine(fullPath, file7), true);
-                    File.Copy(files[rand.Next(files.Length)], Path.Combine(fullPath, file8), true);
-                    Console.WriteLine("Operation Successful");
-                }
+                        File.Copy(files[rand.Next(files.Length)], Path.Combine(fullPath, file1), true);
+                        File.Copy(files[rand.Next(files.Length)], Path.Combine(fullPath, file2), true);
+                        File.Copy(files[rand.Next(files.Length)], Path.Combine(fullPath, file3), true);
+                        File.Copy(files[rand.Next(files.Length)], Path.Combine(fullPath, file4), true);
+                        File.Copy(files[rand.Next(files.Length)], Path.Combine(fullPath, file5), true);
+                        File.Copy(files[rand.Next(files.Length)], Path.Combine(fullPath, file6), true);
+                        File.Copy(files[rand.Next(files.Length)], Path.Combine(fullPath, file7), true);
+                        File.Copy(files[rand.Next(files.Length)], Path.Combine(fullPath, file8), true);
+                        Console.WriteLine("Operation Successful");
+                    }
+
+                    if (defaultConfig.loop) Thread.Sleep(180000);
+                } while (defaultConfig.loop);
+               
             }
 
             Console.WriteLine("Press any key to exit.");
@@ -153,8 +160,10 @@ namespace HLA_Video_Randomizer
             config.FlushAsync();
         }
     }
+
     class configs
     {
         public string HLAPath = @"C:\Program Files (x86)\Steam\steamapps\common\Half-Life Alyx";
+        public bool loop = false;
     }
 }
